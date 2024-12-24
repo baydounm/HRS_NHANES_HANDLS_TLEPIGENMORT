@@ -1,0 +1,5 @@
+,zHorvathAgeEAA,zHannumAgeEAA,zDunedinPoAm,ztelomean_no_outliers
+zHorvathAgeEAA,1,0.51432222,0.18639959,-0.07764478
+zHannumAgeEAA,0.51432222,1,0.20279911,-0.086611874
+zDunedinPoAm,0.18639959,0.20279911,1,0.045997009
+ztelomean_no_outliers,-0.07764478,-0.086611874,0.045997009,1

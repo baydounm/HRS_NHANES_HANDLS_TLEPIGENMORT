@@ -1,0 +1,22 @@
+# Load necessary library
+library(ggplot2)
+
+# Read the dataset
+data <- read.csv("E:/16GBBACKUPUSB/BACKUP_USB_SEPTEMBER2014/SUMMER_STUDENT_2025/HRS_NHANES_HANDLS_TLEPIGENMORT/FINAL_DATA/NHANES/cleaned_results_TABLE5_final.csv")
+
+# Rename columns for clarity
+colnames(data) <- c("Variable", "LnHR", "SE")
+
+# Calculate upper and lower bounds for error bars
+data$Upper <- data$LnHR + 1.96 * data$SE
+data$Lower <- data$LnHR - 1.96 * data$SE
+
+# Plot with error bars
+ggplot(data, aes(x = Variable, y = LnHR)) +
+  geom_point(size = 3, color = "blue") +
+  geom_errorbar(aes(ymin = Lower, ymax = Upper), width = 0.2, color = "red") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Log Hazard Ratios with Error Bars",
+       x = "Variable",
+       y = "Log Hazard Ratio (LnHR)")

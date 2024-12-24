@@ -1,0 +1,273 @@
+{smcl}
+{com}{sf}{ul off}{txt}
+{com}. 
+. 
+. use "E:\16GBBACKUPUSB\BACKUP_USB_SEPTEMBER2014\SUMMER_STUDENT_2025\HRS_NHANES_HANDLS_TLEPIGENMORT\FINAL_DATA\HANDLS\HANDLS_MERGED_DATASETfin",clear
+{txt}
+{com}. 
+. 
+. //STEP 14: LASSO LINEAR MODELS FOR TL VS. EPIGENETIC EAA, FORCING EXOGENOUS VARIABLES. 
+. 
+. 
+. capture drop sample_LASSO
+{txt}
+{com}. sort HNDID
+{txt}
+{com}. save, replace
+{txt}{p 0 4 2}
+file {bf}
+E:\16GBBACKUPUSB\BACKUP_USB_SEPTEMBER2014\SUMMER_STUDENT_2025\HRS_NHANES_HANDLS_TLEPIGENMORT\FINAL_DATA\HANDLS\HANDLS_MERGED_DATASETfin.dta{rm}
+saved
+{p_end}
+
+{com}. splitsample , generate(sample_LASSO) nsplit(2) rseed(1234)
+{res}{txt}
+{com}. tab sample_LASSO
+
+{txt}sample_LASS {c |}
+          O {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+          1 {c |}{res}      1,860       50.00       50.00
+{txt}          2 {c |}{res}      1,860       50.00      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}      3,720      100.00
+{txt}
+{com}. 
+. save, replace
+{txt}{p 0 4 2}
+file {bf}
+E:\16GBBACKUPUSB\BACKUP_USB_SEPTEMBER2014\SUMMER_STUDENT_2025\HRS_NHANES_HANDLS_TLEPIGENMORT\FINAL_DATA\HANDLS\HANDLS_MERGED_DATASETfin.dta{rm}
+saved
+{p_end}
+
+{com}. 
+. *******************************TELOMEAN************************************
+. 
+. lasso linear ztelomean_no_outliers (AGE SEX i.RACE) zHorvathAgeEAA zHannumAgeEAA zDunedinPoAm if sample_LASSO==1, rseed(1234)
+{res}
+{res}10{txt}-fold cross-validation with {res}100 {txt}lambdas ...
+{txt}Grid value {res}1{txt}:{col 19}{txt}lambda ={res} .0396328{txt}{space 3}no. of nonzero coef. = {res}3
+{txt}Folds: 1{txt}.{txt}.{txt}.{txt}5{txt}.{txt}.{txt}.{txt}.{txt}10{space 3}CVF ={res} .8338572
+{txt}Grid value {res}2{txt}:{col 19}{txt}lambda ={res} .0361119{txt}{space 3}no. of nonzero coef. = {res}4
+{txt}Folds: 1{txt}.{txt}.{txt}.{txt}5{txt}.{txt}.{txt}.{txt}.{txt}10{space 3}CVF ={res} .8409758
+{txt}Grid value {res}3{txt}:{col 19}{txt}lambda ={res} .0329039{txt}{space 3}no. of nonzero coef. = {res}4
+{txt}Folds: 1{txt}.{txt}.{txt}.{txt}5{txt}.{txt}.{txt}.{txt}.{txt}10{space 3}CVF ={res} .8483099
+{txt}Grid value {res}4{txt}:{col 19}{txt}lambda ={res} .0299808{txt}{space 3}no. of nonzero coef. = {res}4
+{txt}Folds: 1{txt}.{txt}.{txt}.{txt}5{txt}.{txt}.{txt}.{txt}.{txt}10{space 3}CVF ={res} .8556402
+{txt}... cross-validation complete ... minimum found
+{res}{txt}
+Lasso linear {txt}model{txt}{col 45}No. of obs{col 63}={res}         50
+{txt}{col 45}No. of covariates{col 63}={res}          7
+{txt}Selection: Cross-validation{txt}{col 45}No. of CV folds{col 63}={res}         10
+
+{txt}{hline 9}{c TT}{hline 17}{hline 11}{hline 10}{hline 13}{hline 13}
+{col 10}{c |}{col 39}    No. of{col 49}      Out-of-{col 62}      CV mean
+{col 10}{c |}{col 39}   nonzero{col 49}       sample{col 62}   prediction
+{col 1}      ID{col 10}{c |}     Description{col 28}     lambda{col 39}     coef.{col 49}    R-squared{col 62}        error
+{hline 9}{c +}{hline 17}{hline 11}{hline 10}{hline 13}{hline 13}
+{col 1}     * 1{col 10}{c |} selected lambda{col 28}{res}{space 2} .0396328{col 39}{space 1}        3{col 49}{space 6}-0.1119{col 62}{space 4} .8338572
+{col 1}{txt}       2{col 10}{c |}    lambda after{col 28}{res}{space 2} .0361119{col 39}{space 1}        4{col 49}{space 6}-0.1214{col 62}{space 4} .8409758
+{col 1}{txt}       4{col 10}{c |}     last lambda{col 28}{res}{space 2} .0299808{col 39}{space 1}        4{col 49}{space 6}-0.1410{col 62}{space 4} .8556402
+{txt}{hline 9}{c BT}{hline 17}{hline 11}{hline 10}{hline 13}{hline 13}
+* lambda selected by cross-validation.
+
+{com}. 
+. 
+. cvplot 
+{res}{txt}
+{com}. 
+. graph save "E:\16GBBACKUPUSB\BACKUP_USB_SEPTEMBER2014\SUMMER_STUDENT_2025\HRS_NHANES_HANDLS_TLEPIGENMORT\FIGURES\HANDLS_FIGURES2_LASSO\FIGURES2_TELOMEAN.gph",replace
+{res}{txt}file {bf:E:\16GBBACKUPUSB\BACKUP_USB_SEPTEMBER2014\SUMMER_STUDENT_2025\HRS_NHANES_HANDLS_TLEPIGENMORT\FIGURES\HANDLS_FIGURES2_LASSO\FIGURES2_TELOMEAN.gph} saved
+
+{com}. 
+. estimates store cvTELOMEAN
+{res}{txt}
+{com}. 
+. lassoknots, display(nonzero osr2 bic)
+{res}
+{txt}{hline 7}{c TT}{hline 9}{hline 11}{hline 12}{hline 11}
+{col 8}{c |}{col 18}     No. of{col 29}     Out-of-
+{col 8}{c |}{col 18}    nonzero{col 29}      sample
+{col 1}    ID{col 8}{c |}   lambda{col 18}      coef.{col 29}   R-squared{col 41}        BIC
+{hline 7}{c +}{hline 9}{hline 11}{hline 12}{hline 11}
+{col 1}   * 1{col 8}{c |}{res} .0396328{col 18}{space 4}      3{col 29}{space 5}-0.1119{col 41}{space 2}   138.91
+{col 1}{txt}     2{col 8}{c |}{res} .0361119{col 18}{space 4}      4{col 29}{space 5}-0.1214{col 41}{space 2} 142.6929
+{col 1}{txt}     4{col 8}{c |}{res} .0299808{col 18}{space 4}      4{col 29}{space 5}-0.1410{col 41}{space 2} 142.4961
+{txt}{hline 7}{c BT}{hline 9}{hline 11}{hline 12}{hline 11}
+* lambda selected by cross-validation.
+
+{com}. 
+. lassoselect id=1
+{res}{txt}{bf:ID} = {res}1  {txt}lambda = {res}.0396328 {txt}selected
+
+{com}. 
+. cvplot
+{res}{txt}
+{com}. 
+. estimates store minBICTELOMEAN
+{res}{txt}
+{com}. 
+. lasso linear ztelomean_no_outliers (AGE SEX i.RACE)  zHorvathAgeEAA zHannumAgeEAA zDunedinPoAm if sample_LASSO==1, selection(adaptive) rseed(1234)
+{res}
+{p 0 2 2}
+{txt}Lasso step {res}1{txt} of {res}2{txt}:
+{p_end}
+{res}
+{res}10{txt}-fold cross-validation with {res}100 {txt}lambdas ...
+{txt}Grid value {res}1{txt}:{col 19}{txt}lambda ={res} .0396328{txt}{space 3}no. of nonzero coef. = {res}3
+{txt}Folds: 1{txt}.{txt}.{txt}.{txt}5{txt}.{txt}.{txt}.{txt}.{txt}10{space 3}CVF ={res} .8338572
+{txt}Grid value {res}2{txt}:{col 19}{txt}lambda ={res} .0361119{txt}{space 3}no. of nonzero coef. = {res}4
+{txt}Folds: 1{txt}.{txt}.{txt}.{txt}5{txt}.{txt}.{txt}.{txt}.{txt}10{space 3}CVF ={res} .8409758
+{txt}Grid value {res}3{txt}:{col 19}{txt}lambda ={res} .0329039{txt}{space 3}no. of nonzero coef. = {res}4
+{txt}Folds: 1{txt}.{txt}.{txt}.{txt}5{txt}.{txt}.{txt}.{txt}.{txt}10{space 3}CVF ={res} .8483099
+{txt}Grid value {res}4{txt}:{col 19}{txt}lambda ={res} .0299808{txt}{space 3}no. of nonzero coef. = {res}4
+{txt}Folds: 1{txt}.{txt}.{txt}.{txt}5{txt}.{txt}.{txt}.{txt}.{txt}10{space 3}CVF ={res} .8556402
+{txt}... cross-validation complete ... minimum found
+{res}{txt}
+Lasso linear {txt}model{txt}{col 44}No. of obs{col 63}={res}         50
+{txt}{col 44}No. of covariates{col 63}={res}          7
+{txt}Selection: Adaptive{txt}{col 44}No. of lasso steps{col 63}={res}          1
+
+{txt}Final adaptive step results
+{hline 9}{c TT}{hline 17}{hline 11}{hline 10}{hline 13}{hline 13}
+{col 10}{c |}{col 39}    No. of{col 49}      Out-of-{col 62}      CV mean
+{col 10}{c |}{col 39}   nonzero{col 49}       sample{col 62}   prediction
+{col 1}      ID{col 10}{c |}     Description{col 28}     lambda{col 39}     coef.{col 49}    R-squared{col 62}        error
+{hline 9}{c +}{hline 17}{hline 11}{hline 10}{hline 13}{hline 13}
+{col 1}     * 1{col 10}{c |} selected lambda{col 28}{res}{space 2} .0396328{col 39}{space 1}        3{col 49}{space 6}-0.1119{col 62}{space 4} .8338572
+{col 1}{txt}       2{col 10}{c |}    lambda after{col 28}{res}{space 2} .0361119{col 39}{space 1}        4{col 49}{space 6}-0.1214{col 62}{space 4} .8409758
+{col 1}{txt}       4{col 10}{c |}     last lambda{col 28}{res}{space 2} .0299808{col 39}{space 1}        4{col 49}{space 6}-0.1410{col 62}{space 4} .8556402
+{txt}{hline 9}{c BT}{hline 17}{hline 11}{hline 10}{hline 13}{hline 13}
+* lambda selected by cross-validation in final adaptive step.
+
+{com}. 
+. 
+. estimates store adaptiveTELOMEAN
+{res}{txt}
+{com}. 
+. lassocoef cvTELOMEAN minBICTELOMEAN adaptiveTELOMEAN, sort(coef, standardized) nofvlabel
+{res}
+{txt}{hline 13}{c TT}{hline 11}{hline 16}{hline 18}
+{col 14}{c |} cvTELOMEAN{col 26} minBICTELOMEAN {col 42} adaptiveTELOMEAN 
+{hline 13}{c +}{hline 11}{hline 16}{hline 18}
+{space 9}AGE {c |}{col 14}     x     {col 26}        x       {col 42}         x        
+{space 12} {c |}
+{space 8}RACE {c |}
+{space 10}1  {c |}{col 14}     x     {col 26}        x       {col 42}         x        
+{space 12} {c |}
+{space 9}SEX {c |}{col 14}     x     {col 26}        x       {col 42}         x        
+{space 12} {c |}
+{space 8}RACE {c |}
+{space 10}0  {c |}{col 14}     e     {col 26}        e       {col 42}         e        
+{space 12} {c |}
+{space 7}_cons {c |}{col 14}     x     {col 26}        x       {col 42}         x        
+{hline 13}{c BT}{hline 11}{hline 16}{hline 18}
+Legend:
+  b - base level
+  e - empty cell
+  o - omitted
+  x - estimated
+
+{com}. 
+. 
+. **-----------------------------------------------------------
+. **             | cvTELOMEAN minBICTELOMEAN  adaptiveTELOMEAN 
+. **-------------+---------------------------------------------
+. **         AGE |     x             x                x        
+. **             |
+. **        RACE |
+. **          1  |     x             x                x        
+. **             |
+. **         SEX |     x             x                x        
+. **             |
+. **        RACE |
+. **          0  |     e             e                e        
+. **             |
+. **       _cons |     x             x                x        
+. **-----------------------------------------------------------
+. **Legend:
+. **  b - base level
+. **  e - empty cell
+. **  o - omitted
+. **  x - estimated
+. 
+. 
+. 
+. 
+. lassogof cvTELOMEAN minBICTELOMEAN adaptiveTELOMEAN, over(sample_LASSO) postselection
+{res}
+{txt}Postselection coefficients
+{hline 12}{hline 12}{c TT}{hline 12}{hline 13}{hline 11}
+{col 1}Name        {col 13} sample_L~O{col 25}{c |}         MSE{col 38}    R-squared{col 51}        Obs
+{hline 12}{hline 12}{c +}{hline 12}{hline 13}{hline 11}
+{col 1}cvTELOMEAN  {col 25}{c |}
+{col 13}          1{col 25}{c |}{res}{space 3} .6889135{col 38}{space 6} 0.0814{col 51}{space 4}     50
+{col 13}{txt}          2{col 25}{c |}{res}{space 3} 1.269283{col 38}{space 6}-0.0560{col 51}{space 4}     42
+{txt}{hline 12}{hline 12}{c +}{hline 12}{hline 13}{hline 11}
+{col 1}minBICTELOMEAN{col 25}{c |}
+{col 13}          1{col 25}{c |}{res}{space 3} .6889135{col 38}{space 6} 0.0814{col 51}{space 4}     50
+{col 13}{txt}          2{col 25}{c |}{res}{space 3} 1.269283{col 38}{space 6}-0.0560{col 51}{space 4}     42
+{txt}{hline 12}{hline 12}{c +}{hline 12}{hline 13}{hline 11}
+{col 1}adaptiveTELOMEAN{col 25}{c |}
+{col 13}          1{col 25}{c |}{res}{space 3} .6889135{col 38}{space 6} 0.0814{col 51}{space 4}     50
+{col 13}{txt}          2{col 25}{c |}{res}{space 3} 1.269283{col 38}{space 6}-0.0560{col 51}{space 4}     42
+{txt}{hline 12}{hline 12}{c BT}{hline 12}{hline 13}{hline 11}
+
+{com}. 
+. 
+. 
+. **Postselection coefficients
+. **-------------------------------------------------------------
+. **Name         sample_L~O |         MSE    R-squared        Obs
+. **------------------------+------------------------------------
+. **cvTELOMEAN              |
+. **                      1 |    .6889135       0.0814         50
+. **                      2 |    1.269283      -0.0560         42
+. **------------------------+------------------------------------
+. **minBICTELOMEAN          |
+. **                      1 |    .6889135       0.0814         50
+. **                      2 |    1.269283      -0.0560         42
+. **------------------------+------------------------------------
+. **adaptiveTELOMEAN        |
+. **                      1 |    .6889135       0.0814         50
+. **                      2 |    1.269283      -0.0560         42
+. **-------------------------------------------------------------
+. 
+. 
+. 
+. 
+. ***REDUCED MODEL FROM BEST MODEL SELECTION PROCESS**
+. 
+. reg ztelomean_no_outliers AGE SEX i.RACE  if sample_final==1
+
+{txt}      Source {c |}       SS           df       MS      Number of obs   ={res}        92
+{txt}{hline 13}{c +}{hline 34}   F(3, 88)        = {res}     0.78
+{txt}       Model {c |} {res} 2.29164844         3  .763882814   {txt}Prob > F        ={res}    0.5083
+{txt}    Residual {c |} {res} 86.1910677        88  .979443951   {txt}R-squared       ={res}    0.0259
+{txt}{hline 13}{c +}{hline 34}   Adj R-squared   ={res}   -0.0073
+{txt}       Total {c |} {res} 88.4827161        91   .97233754   {txt}Root MSE        =   {res} .98967
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}ztelomean_~s{col 14}{c |} Coefficient{col 26}  Std. err.{col 38}      t{col 46}   P>|t|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 9}AGE {c |}{col 14}{res}{space 2}-.0096979{col 26}{space 2} .0131873{col 37}{space 1}   -0.74{col 46}{space 3}0.464{col 54}{space 4}-.0359049{col 67}{space 3}  .016509
+{txt}{space 9}SEX {c |}{col 14}{res}{space 2}-.2153838{col 26}{space 2} .2118528{col 37}{space 1}   -1.02{col 46}{space 3}0.312{col 54}{space 4}-.6363966{col 67}{space 3} .2056291
+{txt}{space 6}1.RACE {c |}{col 14}{res}{space 2} .2086122{col 26}{space 2} .2297522{col 37}{space 1}    0.91{col 46}{space 3}0.366{col 54}{space 4}-.2479721{col 67}{space 3} .6651964
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2} .3771274{col 26}{space 2} .6715238{col 37}{space 1}    0.56{col 46}{space 3}0.576{col 54}{space 4} -.957385{col 67}{space 3}  1.71164
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. 
+. 
+. 
+. save "E:\16GBBACKUPUSB\BACKUP_USB_SEPTEMBER2014\SUMMER_STUDENT_2025\HRS_NHANES_HANDLS_TLEPIGENMORT\FINAL_DATA\HANDLS\HANDLS_MERGED_DATASETfin",replace
+{txt}{p 0 4 2}
+file {bf}
+E:\16GBBACKUPUSB\BACKUP_USB_SEPTEMBER2014\SUMMER_STUDENT_2025\HRS_NHANES_HANDLS_TLEPIGENMORT\FINAL_DATA\HANDLS\HANDLS_MERGED_DATASETfin.dta{rm}
+saved
+{p_end}
+
+{com}. 
+. 
+. capture log close
+{smcl}
+{com}{sf}{ul off}
