@@ -1,0 +1,59 @@
+{smcl}
+{com}{sf}{ul off}{txt}
+{com}. 
+. 
+. //STEP 12: CORRELATION MATRIX BETWEEN EPIGENTIC AGE ACCELERATION, EPIGENETIC CLOCKS AND TL VARIABLES//
+. 
+. use "E:\16GBBACKUPUSB\BACKUP_USB_SEPTEMBER2014\SUMMER_STUDENT_2025\HRS_NHANES_HANDLS_TLEPIGENMORT\FINAL_DATA\NHANES\NHANES_MERGED_DATASET",clear
+{txt}
+{com}. 
+. 
+. // Step 1: Run the correlation command and save the matrix
+. corr zHorvathAgeEAA zHannumAgeEAA zPhenoAgeEAA zGrimAgeMortEAA zDunedinPoAm ztelomean_no_outliers  
+{txt}(obs=2,530)
+
+             {c |} zHorva~A zHannu~A zPheno~A zGrimA~A zDuned~m ztelom~s
+{hline 13}{c +}{hline 54}
+zHorvathAg~A {c |}{res}   1.0000
+{txt}zHannumAge~A {c |}{res}   0.6651   1.0000
+{txt}zPhenoAgeEAA {c |}{res}   0.6400   0.6421   1.0000
+{txt}zGrimAgeMo~A {c |}{res}   0.2449   0.2854   0.3901   1.0000
+{txt}zDunedinPoAm {c |}{res}   0.1482   0.2111   0.3595   0.7020   1.0000
+{txt}ztelomean_~s {c |}{res}  -0.0180  -0.1507  -0.1021  -0.0968  -0.0797   1.0000
+
+{txt}
+{com}. matrix C = r(C)
+{txt}
+{com}. 
+. // Step 2: Clear the current dataset (optional if you don't need it)
+. clear
+{txt}
+{com}. 
+. // Step 3: Convert the matrix to a dataset with unique variable names
+. svmat C, names(col)
+{txt}number of observations will be reset to 6
+Press any key to continue, or Break to abort
+{p}
+Number of observations ({bf:_N}) was 0,
+now 6.
+{p_end}
+
+{com}. 
+. // Step 4: Save the dataset as a CSV file
+. export delimited using "E:\16GBBACKUPUSB\BACKUP_USB_SEPTEMBER2014\SUMMER_STUDENT_2025\HRS_NHANES_HANDLS_TLEPIGENMORT\OUTPUT\NHANES_correlation_matrix.csv", replace
+{res}{txt}file {bf:E:\16GBBACKUPUSB\BACKUP_USB_SEPTEMBER2014\SUMMER_STUDENT_2025\HRS_NHANES_HANDLS_TLEPIGENMORT\OUTPUT\NHANES_correlation_matrix.csv} saved
+
+{com}. 
+. **Add a column in excel sheet and re-type labels mannually. Change labels as needed. 
+. 
+. 
+. // Step 5: Reload your original dataset if needed
+. 
+. use "E:\16GBBACKUPUSB\BACKUP_USB_SEPTEMBER2014\SUMMER_STUDENT_2025\HRS_NHANES_HANDLS_TLEPIGENMORT\FINAL_DATA\NHANES\NHANES_MERGED_DATASET",clear
+{txt}
+{com}. 
+. 
+. 
+. capture log close
+{smcl}
+{com}{sf}{ul off}
